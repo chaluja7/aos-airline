@@ -18,6 +18,7 @@ import java.util.List;
  * @author jakubchalupa
  * @since 22.10.16
  */
+@CrossOrigin(origins = "*")
 @RestController
 public class DestinationController extends AbstractController {
 
@@ -86,6 +87,7 @@ public class DestinationController extends AbstractController {
         Destination destination = destinationService.find(destinationId);
         if(destination == null) {
             //OK takova destinace neni v DB
+            // FIXME nepatri sem spis 404 ?
             return;
         }
 
