@@ -18,7 +18,7 @@ import java.util.List;
  * @author jakubchalupa
  * @since 22.10.16
  */
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5555")
 @RestController
 public class DestinationController extends AbstractController {
 
