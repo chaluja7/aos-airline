@@ -14,6 +14,8 @@ import javax.validation.constraints.Size;
 @Table(name = "destinations")
 public class Destination extends AbstractEntity {
 
+    private static final long serialVersionUID = -3069267246928233125L;
+
     @Column(nullable = false, unique = true)
     @Size(max = 255)
     @NotNull

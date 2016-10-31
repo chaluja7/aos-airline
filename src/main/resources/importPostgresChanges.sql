@@ -1,2 +1,4 @@
 ALTER SEQUENCE destinations_id_seq RESTART WITH 30;
+ALTER SEQUENCE flights_id_seq RESTART WITH 30;
+ALTER SEQUENCE reservations_id_seq RESTART WITH 30;
 

@@ -32,9 +32,9 @@ public class DestinationServiceTest extends AbstractServiceTest {
         retrievedDestination = destinationService.find(retrievedDestination.getId());
         Assert.assertEquals(lat2, retrievedDestination.getLat());
 
-//        destinationService.delete(retrievedDestination.getId());
-//        retrievedDestination = destinationService.find(retrievedDestination.getId());
-//        Assert.assertNull(retrievedDestination);
+        destinationService.delete(retrievedDestination.getId());
+        retrievedDestination = destinationService.find(retrievedDestination.getId());
+        Assert.assertNull(retrievedDestination);
     }
 
     public static Destination getNewDestination(String name, Double lat, Double lon) {
