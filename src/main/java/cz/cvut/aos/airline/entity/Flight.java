@@ -1,9 +1,11 @@
 package cz.cvut.aos.airline.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * @author jakubchalupa
@@ -20,20 +22,17 @@ public class Flight extends AbstractEntity {
     @NotNull
     private String name;
 
-    @Column(nullable = false)
-    @NotNull
-    private Date dateOfDeparture;
+    @Column
+    @Type(type = "org.hibernate.type.ZonedDateTimeType")
+    private ZonedDateTime dateOfDeparture;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column
     private Double distance;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column
     private Double price;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column
     private Integer seats;
 
     //schvalne eager, s flight budu chtit vzdy i destinace (pro ucely teto aplikace)
@@ -58,11 +57,11 @@ public class Flight extends AbstractEntity {
         this.name = name;
     }
 
-    public Date getDateOfDeparture() {
+    public ZonedDateTime getDateOfDeparture() {
         return dateOfDeparture;
     }
 
-    public void setDateOfDeparture(Date dateOfDeparture) {
+    public void setDateOfDeparture(ZonedDateTime dateOfDeparture) {
         this.dateOfDeparture = dateOfDeparture;
     }
 

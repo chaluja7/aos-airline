@@ -48,4 +48,10 @@ public class FlightServiceImpl implements FlightService {
     public List<Flight> findAll() {
         return flightDao.findAll();
     }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public int getNumberOfReservedSeats(long id) {
+        return flightDao.getNumberOfReservedSeats(id);
+    }
 }

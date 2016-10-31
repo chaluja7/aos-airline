@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * @author jakubchalupa
@@ -25,26 +25,26 @@ public class ReservationServiceTest extends AbstractServiceTest {
     private ReservationService reservationService;
 
     @Test
-    public void testCRUD() {
+    public void testCRUD() throws NotEnoughSeatsException, InvalidStateChangeException {
         Reservation reservation = getNewReservation(2);
         destinationService.persist(reservation.getFlight().getFrom());
         destinationService.persist(reservation.getFlight().getTo());
         flightService.persist(reservation.getFlight());
         reservationService.persist(reservation);
 
+        int numberOfReservedSeats = flightService.getNumberOfReservedSeats(reservation.getFlight().getId());
+        Assert.assertTrue(numberOfReservedSeats > 0);
+
         Reservation retrievedReservation = reservationService.find(reservation.getId());
         Assert.assertNotNull(retrievedReservation);
         Assert.assertEquals(StateChoices.NEW, retrievedReservation.getState());
 
-        Flight newFlight = FlightServiceTest.getNewFlight("NejakyLet222", 100.56, 30, 49.5, new Date());
+        Flight newFlight = FlightServiceTest.getNewFlight("NejakyLet222", 100.56, 30, 49.5, ZonedDateTime.now());
         newFlight.setFrom(reservation.getFlight().getFrom());
         newFlight.setTo(reservation.getFlight().getTo());
         flightService.persist(newFlight);
 
-        retrievedReservation.setFlight(newFlight);
-        retrievedReservation.setState(StateChoices.PAID);
-        reservationService.merge(retrievedReservation);
-
+        reservationService.updateState(retrievedReservation.getId(), StateChoices.PAID);
         retrievedReservation = reservationService.find(retrievedReservation.getId());
         Assert.assertNotNull(retrievedReservation);
         Assert.assertEquals(StateChoices.PAID, retrievedReservation.getState());
@@ -58,7 +58,7 @@ public class ReservationServiceTest extends AbstractServiceTest {
         Reservation reservation = new Reservation();
         reservation.setSeats(seats);
 
-        Flight flight = FlightServiceTest.getNewFlight("NejakyLet", 100.56, 30, 49.5, new Date());
+        Flight flight = FlightServiceTest.getNewFlight("NejakyLet", 100.56, 30, 49.5, ZonedDateTime.now());
         reservation.setFlight(flight);
 
         return reservation;

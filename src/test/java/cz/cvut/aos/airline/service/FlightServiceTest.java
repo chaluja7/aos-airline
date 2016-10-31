@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
@@ -26,7 +26,7 @@ public class FlightServiceTest extends AbstractServiceTest {
         final String name1 = "Flight1";
         final String name2 = "Flight111";
 
-        Flight flight = getNewFlight(name1, 50.5, 50, 100.6, new Date());
+        Flight flight = getNewFlight(name1, 50.5, 50, 100.6, ZonedDateTime.now());
         destinationService.persist(flight.getFrom());
         destinationService.persist(flight.getTo());
         flightService.persist(flight);
@@ -55,7 +55,7 @@ public class FlightServiceTest extends AbstractServiceTest {
         Assert.assertNull(retrievedFlight);
     }
 
-    public static Flight getNewFlight(String name, Double price, Integer seats, Double distance, Date dateOfDeparture) {
+    public static Flight getNewFlight(String name, Double price, Integer seats, Double distance, ZonedDateTime dateOfDeparture) {
         Flight flight = new Flight();
 
         flight.setName(name);

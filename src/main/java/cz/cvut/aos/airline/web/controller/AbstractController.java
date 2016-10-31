@@ -19,6 +19,4 @@ public abstract class AbstractController {
         return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
-    protected abstract String getResourceDestination(Long id);
-
 }

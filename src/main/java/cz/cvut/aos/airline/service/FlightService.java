@@ -21,4 +21,6 @@ public interface FlightService {
 
     List<Flight> findAll();
 
+    int getNumberOfReservedSeats(long id);
+
 }

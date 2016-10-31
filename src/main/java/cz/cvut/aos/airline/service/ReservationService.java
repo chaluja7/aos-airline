@@ -2,6 +2,7 @@ package cz.cvut.aos.airline.service;
 
 
 import cz.cvut.aos.airline.entity.Reservation;
+import cz.cvut.aos.airline.entity.StateChoices;
 
 import java.util.List;
 
@@ -13,9 +14,9 @@ public interface ReservationService {
 
     Reservation find(long id);
 
-    void persist(Reservation reservation);
+    void persist(Reservation reservation) throws NotEnoughSeatsException;
 
-    void merge(Reservation reservation);
+    void updateState(long id, StateChoices newState) throws InvalidStateChangeException;
 
     void delete(long id);
 

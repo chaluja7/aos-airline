@@ -1,8 +1,10 @@
 package cz.cvut.aos.airline.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * @author jakubchalupa
@@ -26,9 +28,11 @@ public class Reservation extends AbstractEntity {
 
     @Column(nullable = false)
     @NotNull
-    private Date created;
+    @Type(type = "org.hibernate.type.ZonedDateTimeType")
+    private ZonedDateTime created;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private StateChoices state;
 
     //schvalne eager, s rezervaci budu chtit vzdy vytahnout i let (pro ucely teto aplikace)
@@ -54,11 +58,11 @@ public class Reservation extends AbstractEntity {
         this.password = password;
     }
 
-    public Date getCreated() {
+    public ZonedDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(ZonedDateTime created) {
         this.created = created;
     }
 

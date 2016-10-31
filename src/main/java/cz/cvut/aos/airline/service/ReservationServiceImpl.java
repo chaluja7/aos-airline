@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +22,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationDao reservationDao;
 
+    @Autowired
+    private FlightService flightService;
+
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Reservation find(long id) {
@@ -30,8 +33,19 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void persist(Reservation reservation) {
-        reservation.setCreated(new Date());
+    public void persist(Reservation reservation) throws NotEnoughSeatsException {
+        //musim zjistit, zda mam dost volnych mist
+        if(reservation.getFlight() == null || reservation.getSeats() == null || reservation.getSeats() <= 0) throw new IllegalStateException();
+
+        final int totalNumberOfSeats = reservation.getFlight().getSeats() != null ? reservation.getFlight().getSeats() : 0;
+        final int currentNumberOfSeats = reservation.getSeats() + flightService.getNumberOfReservedSeats(reservation.getFlight().getId());
+        if(currentNumberOfSeats > totalNumberOfSeats) {
+            //pri soubezne vicero rezeravci se zde muze stat, ze by volna mista pretekla, protoze probehla jina rezervace,
+            // v ramci teto app nereseno ale vime o tom. Vyresil by napr. dodatecny constraint na databazi nebo lock/synchronized block.
+            throw new NotEnoughSeatsException();
+        }
+
+        reservation.setCreated(ZonedDateTime.now());
         reservation.setState(StateChoices.NEW);
         reservation.setPassword(UUID.randomUUID().toString());
 
@@ -40,8 +54,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void merge(Reservation reservation) {
-        reservationDao.merge(reservation);
+    public void updateState(long id, StateChoices newState) throws InvalidStateChangeException {
+        Reservation reservation = find(id);
+        if(reservation == null || newState == null) {
+            throw new IllegalArgumentException();
+        }
+
+        reservationDao.updateState(id, newState);
     }
 
     @Override

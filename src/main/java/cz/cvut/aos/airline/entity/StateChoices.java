@@ -10,4 +10,16 @@ public enum StateChoices {
     PAID,
     CANCELLED;
 
+    public static StateChoices fromStringCode(String code) {
+        if(code != null) {
+            for(StateChoices stateChoices : StateChoices.values()) {
+                if(code.equalsIgnoreCase(stateChoices.name())) {
+                    return stateChoices;
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

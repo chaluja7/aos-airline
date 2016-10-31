@@ -4,6 +4,7 @@ import cz.cvut.aos.airline.entity.Destination;
 import cz.cvut.aos.airline.service.DestinationService;
 import cz.cvut.aos.airline.web.exception.BadRequestException;
 import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
+import cz.cvut.aos.airline.web.wrapper.CreateDestinationWrapper;
 import cz.cvut.aos.airline.web.wrapper.DestinationWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,7 +19,6 @@ import java.util.List;
  * @author jakubchalupa
  * @since 22.10.16
  */
-@CrossOrigin(origins = "http://localhost:5555")
 @RestController
 public class DestinationController extends AbstractController {
 
@@ -48,8 +48,8 @@ public class DestinationController extends AbstractController {
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> createDestination(@RequestBody DestinationWrapper wrapper) {
-        if(wrapper == null || wrapper.getId() != null || wrapper.getUrl() != null) {
+    public ResponseEntity<String> createDestination(@RequestBody CreateDestinationWrapper wrapper) {
+        if(wrapper == null) {
             throw new BadRequestException();
         }
 
@@ -64,12 +64,12 @@ public class DestinationController extends AbstractController {
     }
 
     @RequestMapping(value = PATH + "/{destinationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public void updateDestination(@PathVariable Long destinationId, @RequestBody DestinationWrapper wrapper) {
+    public void updateDestination(@PathVariable Long destinationId, @RequestBody CreateDestinationWrapper wrapper) {
         if(destinationService.find(destinationId) == null) {
             throw new ResourceNotFoundException();
         }
 
-        if(wrapper == null || wrapper.getId() != null || wrapper.getUrl() != null) {
+        if(wrapper == null) {
             throw new BadRequestException();
         }
 
@@ -87,7 +87,6 @@ public class DestinationController extends AbstractController {
         Destination destination = destinationService.find(destinationId);
         if(destination == null) {
             //OK takova destinace neni v DB
-            // FIXME nepatri sem spis 404 ?
             return;
         }
 
@@ -110,7 +109,7 @@ public class DestinationController extends AbstractController {
         return wrapper;
     }
 
-    private Destination getDestinationFromWrapper(DestinationWrapper wrapper) {
+    private Destination getDestinationFromWrapper(CreateDestinationWrapper wrapper) {
         if(wrapper == null) return null;
 
         Destination destination = new Destination();
@@ -121,8 +120,7 @@ public class DestinationController extends AbstractController {
         return destination;
     }
 
-    @Override
-    protected String getResourceDestination(Long id) {
+    public static String getResourceDestination(Long id) {
         return PATH + "/" + id;
     }
 }
