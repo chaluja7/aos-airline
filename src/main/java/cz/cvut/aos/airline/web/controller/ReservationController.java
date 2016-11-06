@@ -58,7 +58,7 @@ public class ReservationController extends AbstractController {
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> createReservation(@RequestBody CreateReservationWrapper wrapper) {
+    public ResponseEntity<?> createReservation(@RequestBody CreateReservationWrapper wrapper) {
         Reservation reservation = getReservationFromCreateWrapper(wrapper);
         if(reservation == null || reservation.getSeats() == null || reservation.getSeats() <= 0) {
             throw new BadRequestException();
@@ -70,7 +70,7 @@ public class ReservationController extends AbstractController {
             throw new BadRequestException();
         }
 
-        return getResponseCreated(getResourceDestination(reservation.getId()));
+        return getResponseCreated(getReservationWrapper(reservationService.find(reservation.getId())), getResourceDestination(reservation.getId()));
     }
 
     @RequestMapping(value = PATH + "/{reservationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -90,7 +90,7 @@ public class ReservationController extends AbstractController {
         }
 
         try {
-            reservationService.updateState(reservationId, newState);
+            reservationService.updateState(reservation.getId(), reservation.getState(), newState);
         } catch (InvalidStateChangeException | PersistenceException e) {
             throw new BadRequestException();
         }
@@ -113,7 +113,7 @@ public class ReservationController extends AbstractController {
     }
 
     @RequestMapping(value = PATH + "/{reservationId}/payment", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> payReservation(@PathVariable Long reservationId, @RequestBody PayReservationWrapper wrapper) {
+    public ResponseEntity<?> payReservation(@PathVariable Long reservationId, @RequestBody PayReservationWrapper wrapper) {
         Reservation reservation = reservationService.find(reservationId);
         if(reservation == null) {
             throw new ResourceNotFoundException();
@@ -124,17 +124,15 @@ public class ReservationController extends AbstractController {
             throw new BadRequestException();
         }
 
-        //pri soubehu se zde muze stat, ze by se rezervace zaplatila vicekrat, v ramci teto app nereseno ale vime o tom.
-
         try {
-            reservationService.updateState(reservationId, StateChoices.PAID);
+            reservationService.updateState(reservation.getId(), reservation.getState(), StateChoices.PAID);
         } catch (InvalidStateChangeException | PersistenceException e) {
             throw new BadRequestException();
         }
 
         //protoze neexistuje entita "platba", neni ze zadani zrejme, kam nyni presmerovat
         //vyreseno tak, ze se v Location hlavicce vrati pouze url rezervace.
-        return getResponseCreated(getResourceDestination(reservation.getId()));
+        return getResponseCreated(null, getResourceDestination(reservation.getId()));
     }
 
     private ReservationWrapper getReservationWrapper(Reservation reservation) {
@@ -144,6 +142,7 @@ public class ReservationController extends AbstractController {
         wrapper.setId(reservation.getId());
         wrapper.setSeats(reservation.getSeats());
         wrapper.setState(reservation.getState().name());
+        wrapper.setPassword(reservation.getPassword());
 
         if(reservation.getFlight() != null) {
             wrapper.setFlight(reservation.getFlight().getId());

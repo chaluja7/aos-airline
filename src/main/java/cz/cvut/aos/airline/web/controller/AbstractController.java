@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public abstract class AbstractController {
 
-    protected ResponseEntity<String> getResponseCreated(String location) {
+    protected ResponseEntity<?> getResponseCreated(Object body, String location) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Location", location);
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(body, httpHeaders, HttpStatus.CREATED);
     }
 
 }

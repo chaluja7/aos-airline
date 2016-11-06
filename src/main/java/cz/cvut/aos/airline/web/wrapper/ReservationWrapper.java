@@ -14,6 +14,9 @@ public class ReservationWrapper extends CreateReservationWrapper implements Comm
 
     private String state;
 
+    //heslo je nutne v odpovedi mit, protoze se ho uzivatel musi nejak po vytvoreni rezeravce dozvedet
+    private String password;
+
     private String flightUrl;
 
     public String getCreated() {
@@ -38,6 +41,14 @@ public class ReservationWrapper extends CreateReservationWrapper implements Comm
 
     public void setFlightUrl(String flightUrl) {
         this.flightUrl = flightUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

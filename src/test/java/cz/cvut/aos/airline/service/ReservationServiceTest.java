@@ -44,7 +44,7 @@ public class ReservationServiceTest extends AbstractServiceTest {
         newFlight.setTo(reservation.getFlight().getTo());
         flightService.persist(newFlight);
 
-        reservationService.updateState(retrievedReservation.getId(), StateChoices.PAID);
+        reservationService.updateState(retrievedReservation.getId(), retrievedReservation.getState(), StateChoices.PAID);
         retrievedReservation = reservationService.find(retrievedReservation.getId());
         Assert.assertNotNull(retrievedReservation);
         Assert.assertEquals(StateChoices.PAID, retrievedReservation.getState());

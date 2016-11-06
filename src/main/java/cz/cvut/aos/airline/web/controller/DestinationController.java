@@ -48,7 +48,7 @@ public class DestinationController extends AbstractController {
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> createDestination(@RequestBody CreateDestinationWrapper wrapper) {
+    public ResponseEntity<?> createDestination(@RequestBody CreateDestinationWrapper wrapper) {
         if(wrapper == null) {
             throw new BadRequestException();
         }
@@ -60,7 +60,7 @@ public class DestinationController extends AbstractController {
             throw new BadRequestException();
         }
 
-        return getResponseCreated(getResourceDestination(destination.getId()));
+        return getResponseCreated(getDestinationWrapper(destinationService.find(destination.getId())), getResourceDestination(destination.getId()));
     }
 
     @RequestMapping(value = PATH + "/{destinationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

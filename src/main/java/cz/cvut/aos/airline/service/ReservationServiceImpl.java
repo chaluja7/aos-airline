@@ -54,13 +54,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void updateState(long id, StateChoices newState) throws InvalidStateChangeException {
+    public void updateState(long id, StateChoices oldState, StateChoices newState) throws InvalidStateChangeException {
         Reservation reservation = find(id);
         if(reservation == null || newState == null) {
             throw new IllegalArgumentException();
         }
 
-        reservationDao.updateState(id, newState);
+        reservationDao.updateState(id, oldState, newState);
     }
 
     @Override

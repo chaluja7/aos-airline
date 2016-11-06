@@ -54,7 +54,7 @@ public class FlightController extends AbstractController {
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> createFlight(@RequestBody CreateFlightWrapper wrapper) {
+    public ResponseEntity<?> createFlight(@RequestBody CreateFlightWrapper wrapper) {
         if(wrapper == null) {
             throw new BadRequestException();
         }
@@ -66,7 +66,7 @@ public class FlightController extends AbstractController {
             throw new BadRequestException();
         }
 
-        return getResponseCreated(getResourceDestination(flight.getId()));
+        return getResponseCreated(getFlightWrapper(flightService.find(flight.getId())), getResourceDestination(flight.getId()));
     }
 
     @RequestMapping(value = PATH + "/{flightId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
