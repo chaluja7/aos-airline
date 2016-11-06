@@ -55,8 +55,8 @@ public class FlightController extends AbstractController {
         final int totalNumberOfFlights = flightService.countAll();
 
         //limit
-        final int start = getListStartValueFromHeader(xBase);
-        final int tmpCount = getListCountValueFromHeader(xOffset);
+        final int start = getListStartValueFromHeader(xOffset);
+        final int tmpCount = getListCountValueFromHeader(xBase);
         final int count = tmpCount >= 0 ? tmpCount : totalNumberOfFlights;
 
         //razeni

@@ -92,7 +92,7 @@ public class DestinationController extends AbstractController {
             //OK takova destinace neni v DB
             return;
         }
-
+        // FIXME: vraci 500, nejspis je-li soucasti flight nelze smazat, pak by melo spise vracet 4xx
         destinationService.delete(destination.getId());
     }
 
