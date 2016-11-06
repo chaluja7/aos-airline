@@ -13,9 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public abstract class AbstractController {
 
+    protected static final String X_COUNT_HEADER = "X-Count-records";
+
+    protected static final String X_BASE_HEADER = "X-Base";
+
+    protected static final String X_OFFSET_HEADER = "X-Offset";
+
+    protected static final String X_ORDER = "X-Order";
+
+    protected static final String X_FILTER = "X-Filter";
+
     protected ResponseEntity<?> getResponseCreated(Object body, String location) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Location", location);
+        httpHeaders.add(HttpHeaders.LOCATION, location);
         return new ResponseEntity<>(body, httpHeaders, HttpStatus.CREATED);
     }
 

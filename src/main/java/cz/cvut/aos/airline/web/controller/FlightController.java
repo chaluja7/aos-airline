@@ -3,11 +3,14 @@ package cz.cvut.aos.airline.web.controller;
 import cz.cvut.aos.airline.entity.Flight;
 import cz.cvut.aos.airline.service.DestinationService;
 import cz.cvut.aos.airline.service.FlightService;
+import cz.cvut.aos.airline.service.exception.UnknownOrderColumnException;
 import cz.cvut.aos.airline.web.exception.BadRequestException;
 import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
 import cz.cvut.aos.airline.web.wrapper.CreateFlightWrapper;
 import cz.cvut.aos.airline.web.wrapper.FlightWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +47,40 @@ public class FlightController extends AbstractController {
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.GET)
-    public List<FlightWrapper> getFlights() {
+    public ResponseEntity<List<FlightWrapper>> getFlights(@RequestHeader(value = X_BASE_HEADER, required = false) Integer xBase,
+                                                          @RequestHeader(value = X_OFFSET_HEADER, required = false) Integer xOffset,
+                                                          @RequestHeader(value = X_ORDER, required = false) String xOrder,
+                                                          @RequestHeader(value = X_FILTER, required = false) String xFilter) {
+
+        final int totalNumberOfFlights = flightService.countAll();
+
+        //limit
+        final int start = getListStartValueFromHeader(xBase);
+        final int tmpCount = getListCountValueFromHeader(xOffset);
+        final int count = tmpCount >= 0 ? tmpCount : totalNumberOfFlights;
+
+        //razeni
+        final OrderHeaderValue listOrderValueFromHeader = getListOrderValueFromHeader(xOrder);
+
+        //filtrovani
+        final FilterHeaderValue listFilterValueFromHeader = getListFilterValueFromHeader(xFilter);
+
         List<FlightWrapper> list = new ArrayList<>();
-        for(Flight flight : flightService.findAll()) {
-            list.add(getFlightWrapper(flight));
+        if(count > 0) {
+            try {
+                List<Flight> flights = flightService.find(listFilterValueFromHeader.getDepartureFrom(), listFilterValueFromHeader.getDepartureTo(),
+                                                          start, count, listOrderValueFromHeader.getColumn(), listOrderValueFromHeader.isDesc());
+                for(Flight flight : flights) {
+                    list.add(getFlightWrapper(flight));
+                }
+            } catch(UnknownOrderColumnException unknownOrderColumnException) {
+                throw new BadRequestException();
+            }
         }
 
-        return list;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(X_COUNT_HEADER, totalNumberOfFlights + "");
+        return new ResponseEntity<>(list, httpHeaders, HttpStatus.OK);
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -162,5 +192,153 @@ public class FlightController extends AbstractController {
 
     public static String getResourceDestination(Long id) {
         return PATH + "/" + id;
+    }
+
+    /**
+     * @param xBase xBase hlavicka
+     * @return rozhodujici hodnotu z hlavicky xBase
+     */
+    private int getListStartValueFromHeader(Integer xBase) {
+        if(xBase != null && xBase > 0) {
+            return xBase - 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param xOffset xOffset hlavicka
+     * @return rozhodujici hodnotu z hlavicky xOffset
+     */
+    private int getListCountValueFromHeader(Integer xOffset) {
+        if(xOffset != null && xOffset >= 0) {
+            return xOffset;
+        }
+
+        return -1;
+    }
+
+    /**
+     * @param xOrder xOrder hlavicka
+     * @return rozhodujici hodnoty z hlavicky xOrder
+     */
+    private OrderHeaderValue getListOrderValueFromHeader(String xOrder) {
+        String orderColumn = null;
+        boolean desc = false;
+
+        if(xOrder != null) {
+            //oddeleni "sloupec":desc
+            if(xOrder.contains(":")) {
+                String[] split = xOrder.split(":");
+                if(split.length == 2) {
+                    orderColumn = split[0];
+                    desc = "desc".equalsIgnoreCase(split[1]);
+                } else {
+                    throw new BadRequestException();
+                }
+            } else {
+                orderColumn = xOrder;
+                desc = false;
+            }
+        }
+
+        return new OrderHeaderValue(orderColumn, desc);
+    }
+
+    /**
+     * @param xFilter xFilter hlavicka
+     * @return rozhodujici hodnoty z hlavicky xFilter
+     */
+    private FilterHeaderValue getListFilterValueFromHeader(String xFilter) {
+        ZonedDateTime departureFrom = null;
+        ZonedDateTime departureTo = null;
+
+        if(xFilter != null) {
+            List<String> simpleValues = new ArrayList<>();
+            if(xFilter.contains(",")) {
+                //jsou tam oba datumy
+                String[] split = xFilter.split(",");
+                if(split.length == 2) {
+                    simpleValues.add(split[0]);
+                    simpleValues.add(split[1]);
+                } else {
+                    throw new BadRequestException();
+                }
+            } else {
+                //je tam jen jeden datum
+                simpleValues.add(xFilter);
+            }
+
+            //v simpleValues mam nyni klic=hodnota hodnoty
+            for(String simpleValue : simpleValues) {
+                if(!simpleValue.contains("=")) {
+                    throw new BadRequestException();
+                }
+
+                String[] split = simpleValue.split("=");
+                if(split.length != 2) {
+                    throw new BadRequestException();
+                }
+
+                switch(split[0]) {
+                    case "dateOfDepartureFrom":
+                        departureFrom = ZonedDateTime.parse(split[1], DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+                        break;
+                    case "dateOfDepartureTo":
+                        departureTo = ZonedDateTime.parse(split[1], DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+                        break;
+                    default:
+                        throw new BadRequestException();
+                }
+            }
+        }
+
+        return new FilterHeaderValue(departureFrom, departureTo);
+    }
+
+    /**
+     * pomocna trida pro hodnoty hlavicky X-Order
+     */
+    private class OrderHeaderValue {
+
+        private final String column;
+
+        private final boolean desc;
+
+        public OrderHeaderValue(String column, boolean desc) {
+            this.column = column;
+            this.desc = desc;
+        }
+
+        public String getColumn() {
+            return column;
+        }
+
+        public boolean isDesc() {
+            return desc;
+        }
+    }
+
+    /**
+     * pomocna trid pro hodnoty hlavicky X-Filter
+     */
+    private class FilterHeaderValue {
+
+        private final ZonedDateTime departureFrom;
+
+        private final ZonedDateTime departureTo;
+
+        public FilterHeaderValue(ZonedDateTime departureFrom, ZonedDateTime departureTo) {
+            this.departureFrom = departureFrom;
+            this.departureTo = departureTo;
+        }
+
+        public ZonedDateTime getDepartureFrom() {
+            return departureFrom;
+        }
+
+        public ZonedDateTime getDepartureTo() {
+            return departureTo;
+        }
     }
 }

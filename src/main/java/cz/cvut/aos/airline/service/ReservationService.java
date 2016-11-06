@@ -3,6 +3,9 @@ package cz.cvut.aos.airline.service;
 
 import cz.cvut.aos.airline.entity.Reservation;
 import cz.cvut.aos.airline.entity.StateChoices;
+import cz.cvut.aos.airline.service.exception.InvalidReservationDeleteException;
+import cz.cvut.aos.airline.service.exception.InvalidStateChangeException;
+import cz.cvut.aos.airline.service.exception.NotEnoughSeatsException;
 
 import java.util.List;
 

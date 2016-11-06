@@ -2,11 +2,14 @@ package cz.cvut.aos.airline.service;
 
 import cz.cvut.aos.airline.entity.Destination;
 import cz.cvut.aos.airline.entity.Flight;
+import cz.cvut.aos.airline.service.exception.UnknownOrderColumnException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -53,6 +56,21 @@ public class FlightServiceTest extends AbstractServiceTest {
         flightService.delete(retrievedFlight.getId());
         retrievedFlight = flightService.find(retrievedFlight.getId());
         Assert.assertNull(retrievedFlight);
+    }
+
+    @Test
+    public void testCountAll() {
+        int i = flightService.countAll();
+        Assert.assertTrue(i >= 0);
+    }
+
+    @Test
+    public void testFind() throws UnknownOrderColumnException {
+        ZonedDateTime departureFrom = ZonedDateTime.parse("2012-10-24T11:15:41+02:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        ZonedDateTime departureTo = ZonedDateTime.parse("2013-10-24T11:15:41+02:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+        List<Flight> flights = flightService.find(departureFrom, departureTo, 0, 4, "dateOfDeparture", false);
+        Assert.assertNotNull(flights);
     }
 
     public static Flight getNewFlight(String name, Double price, Integer seats, Double distance, ZonedDateTime dateOfDeparture) {

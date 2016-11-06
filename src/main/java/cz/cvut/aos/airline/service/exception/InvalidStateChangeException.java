@@ -1,4 +1,4 @@
-package cz.cvut.aos.airline.service;
+package cz.cvut.aos.airline.service.exception;
 
 /**
  * @author jakubchalupa

@@ -3,6 +3,8 @@ package cz.cvut.aos.airline.service;
 import cz.cvut.aos.airline.entity.Flight;
 import cz.cvut.aos.airline.entity.Reservation;
 import cz.cvut.aos.airline.entity.StateChoices;
+import cz.cvut.aos.airline.service.exception.InvalidStateChangeException;
+import cz.cvut.aos.airline.service.exception.NotEnoughSeatsException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

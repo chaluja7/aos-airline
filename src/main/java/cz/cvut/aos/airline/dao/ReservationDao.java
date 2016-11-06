@@ -3,8 +3,8 @@ package cz.cvut.aos.airline.dao;
 import cz.cvut.aos.airline.dao.generics.AbstractGenericHibernateDao;
 import cz.cvut.aos.airline.entity.Reservation;
 import cz.cvut.aos.airline.entity.StateChoices;
-import cz.cvut.aos.airline.service.InvalidReservationDeleteException;
-import cz.cvut.aos.airline.service.InvalidStateChangeException;
+import cz.cvut.aos.airline.service.exception.InvalidReservationDeleteException;
+import cz.cvut.aos.airline.service.exception.InvalidStateChangeException;
 import org.springframework.stereotype.Repository;
 
 /**
