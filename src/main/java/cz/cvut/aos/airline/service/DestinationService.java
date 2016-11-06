@@ -21,4 +21,6 @@ public interface DestinationService {
 
     List<Destination> findAll();
 
+    List<Destination> findAll(boolean desc);
+
 }

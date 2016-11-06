@@ -15,7 +15,7 @@ import java.util.List;
  * @since 22.10.16
  */
 @Repository
-@SuppressWarnings("JpaQlInspection")
+@SuppressWarnings({"JpaQlInspection", "unchecked"})
 public class FlightDao extends AbstractGenericHibernateDao<Flight> {
 
     public FlightDao() {

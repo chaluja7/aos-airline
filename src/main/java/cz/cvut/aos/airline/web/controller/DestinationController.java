@@ -38,9 +38,12 @@ public class DestinationController extends AbstractController {
     }
 
     @RequestMapping(value = PATH, method = RequestMethod.GET)
-    public List<DestinationWrapper> getDestinations() {
+    public List<DestinationWrapper> getDestinations(@RequestHeader(value = X_ORDER, required = false) String xOrder) {
+        //zde je dle zadani v hlavicce X-Order pouze asc nebo desc - vyvozeno z toho, ze se radi automaticky dle jmena
+        final boolean desc = xOrder != null && xOrder.equalsIgnoreCase("desc");
+
         List<DestinationWrapper> list = new ArrayList<>();
-        for(Destination destination : destinationService.findAll()) {
+        for(Destination destination : destinationService.findAll(desc)) {
             list.add(getDestinationWrapper(destination));
         }
 

@@ -48,4 +48,10 @@ public class DestinationServiceImpl implements DestinationService {
     public List<Destination> findAll() {
         return destinationDao.findAll();
     }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public List<Destination> findAll(boolean desc) {
+        return destinationDao.findAll(desc);
+    }
 }
