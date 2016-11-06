@@ -3,6 +3,7 @@ package cz.cvut.aos.airline.dao;
 import cz.cvut.aos.airline.dao.generics.AbstractGenericHibernateDao;
 import cz.cvut.aos.airline.entity.Reservation;
 import cz.cvut.aos.airline.entity.StateChoices;
+import cz.cvut.aos.airline.service.InvalidReservationDeleteException;
 import cz.cvut.aos.airline.service.InvalidStateChangeException;
 import org.springframework.stereotype.Repository;
 
@@ -32,4 +33,16 @@ public class ReservationDao extends AbstractGenericHibernateDao<Reservation> {
         }
     }
 
+    public void deleteWithStateControl(long id, StateChoices currentState) throws InvalidReservationDeleteException {
+        int numberOfDeleted = sessionFactory.getCurrentSession()
+            .createQuery("delete from Reservation where id = :id and state = :currentState")
+            .setParameter("id", id)
+            .setParameter("currentState", currentState)
+            .executeUpdate();
+
+        if(numberOfDeleted != 1) {
+            //snazim se smazat rezervaci, ale mezi tim se ji zmenil stav
+            throw new InvalidReservationDeleteException();
+        }
+    }
 }

@@ -1,8 +1,6 @@
 package cz.cvut.aos.airline.service;
 
 /**
- * When flight doesn't have enough free seats available.
- *
  * @author jakubchalupa
  * @since 31.10.16
  */

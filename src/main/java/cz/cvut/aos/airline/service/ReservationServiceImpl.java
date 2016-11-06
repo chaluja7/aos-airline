@@ -70,6 +70,12 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
+    public void deleteWithStateControl(long id, StateChoices currentState) throws InvalidReservationDeleteException {
+        reservationDao.deleteWithStateControl(id, currentState);
+    }
+
+    @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Reservation> findAll() {
         return reservationDao.findAll();

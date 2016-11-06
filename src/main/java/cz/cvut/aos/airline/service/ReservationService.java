@@ -28,6 +28,8 @@ public interface ReservationService {
 
     void delete(long id);
 
+    void deleteWithStateControl(long id, StateChoices currentState) throws InvalidReservationDeleteException;
+
     List<Reservation> findAll();
 
 }

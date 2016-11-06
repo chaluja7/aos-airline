@@ -2,10 +2,7 @@ package cz.cvut.aos.airline.web.controller;
 
 import cz.cvut.aos.airline.entity.Reservation;
 import cz.cvut.aos.airline.entity.StateChoices;
-import cz.cvut.aos.airline.service.FlightService;
-import cz.cvut.aos.airline.service.InvalidStateChangeException;
-import cz.cvut.aos.airline.service.NotEnoughSeatsException;
-import cz.cvut.aos.airline.service.ReservationService;
+import cz.cvut.aos.airline.service.*;
 import cz.cvut.aos.airline.web.exception.BadRequestException;
 import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
 import cz.cvut.aos.airline.web.wrapper.CreateReservationWrapper;
@@ -109,7 +106,11 @@ public class ReservationController extends AbstractController {
             throw new BadRequestException();
         }
 
-        reservationService.delete(reservation.getId());
+        try {
+            reservationService.deleteWithStateControl(reservation.getId(), reservation.getState());
+        } catch (InvalidReservationDeleteException e) {
+            throw new BadRequestException();
+        }
     }
 
     @RequestMapping(value = PATH + "/{reservationId}/payment", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
