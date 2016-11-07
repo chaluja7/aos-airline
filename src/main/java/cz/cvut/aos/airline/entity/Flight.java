@@ -23,7 +23,7 @@ public class Flight extends AbstractEntity {
     @NotNull
     private String name;
 
-    @Column
+    @Column(columnDefinition= "TIMESTAMP WITH TIME ZONE")
     @Type(type = "org.hibernate.type.ZonedDateTimeType")
     private ZonedDateTime dateOfDeparture;
 

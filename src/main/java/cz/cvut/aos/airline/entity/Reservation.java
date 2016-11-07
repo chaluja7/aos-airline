@@ -26,7 +26,7 @@ public class Reservation extends AbstractEntity {
     @NotNull
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition= "TIMESTAMP WITH TIME ZONE")
     @NotNull
     @Type(type = "org.hibernate.type.ZonedDateTimeType")
     private ZonedDateTime created;
