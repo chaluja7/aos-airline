@@ -7,6 +7,7 @@ import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
 import cz.cvut.aos.airline.web.wrapper.CreateDestinationWrapper;
 import cz.cvut.aos.airline.web.wrapper.DestinationWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,8 +93,13 @@ public class DestinationController extends AbstractController {
             //OK takova destinace neni v DB
             return;
         }
-        // FIXME: vraci 500, nejspis je-li soucasti flight nelze smazat, pak by melo spise vracet 4xx
-        destinationService.delete(destination.getId());
+
+        try {
+            destinationService.delete(destination.getId());
+        } catch (DataIntegrityViolationException e) {
+            //destinaci nejde smazat, protoze ji jiz vyuziva nejaky flight
+            throw new BadRequestException();
+        }
     }
 
     private DestinationWrapper getDestinationWrapper(Destination destination) {

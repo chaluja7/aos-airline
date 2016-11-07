@@ -9,6 +9,7 @@ import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
 import cz.cvut.aos.airline.web.wrapper.CreateFlightWrapper;
 import cz.cvut.aos.airline.web.wrapper.FlightWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -126,7 +127,12 @@ public class FlightController extends AbstractController {
             return;
         }
 
-        flightService.delete(flight.getId());
+        try {
+            flightService.delete(flight.getId());
+        } catch (DataIntegrityViolationException e) {
+            //flight nemuzu smazat, protoze jsou na nej jiz napojene rezervace
+            throw new BadRequestException();
+        }
     }
 
     private FlightWrapper getFlightWrapper(Flight flight) {
