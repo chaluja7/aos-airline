@@ -3,6 +3,8 @@ package cz.cvut.aos.airline.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -22,10 +24,14 @@ public class Destination extends AbstractEntity {
     private String name;
 
     @Column(nullable = false)
+    @Min(-90)
+    @Max(90)
     @NotNull
     private Double lat;
 
     @Column(nullable = false)
+    @Min(-180)
+    @Max(180)
     @NotNull
     private Double lon;
 

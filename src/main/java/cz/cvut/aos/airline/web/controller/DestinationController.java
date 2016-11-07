@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class DestinationController extends AbstractController {
         Destination destination = getDestinationFromWrapper(wrapper);
         try {
             destinationService.persist(destination);
-        } catch (PersistenceException e) {
+        } catch (PersistenceException | ConstraintViolationException | DataIntegrityViolationException e) {
             throw new BadRequestException();
         }
 
@@ -81,7 +82,7 @@ public class DestinationController extends AbstractController {
         destination.setId(destinationId);
         try {
             destinationService.merge(destination);
-        } catch (PersistenceException e) {
+        } catch (PersistenceException | ConstraintViolationException | DataIntegrityViolationException e) {
             throw new BadRequestException();
         }
     }

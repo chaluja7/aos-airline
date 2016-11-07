@@ -3,6 +3,7 @@ package cz.cvut.aos.airline.entity;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
@@ -27,12 +28,15 @@ public class Flight extends AbstractEntity {
     private ZonedDateTime dateOfDeparture;
 
     @Column
+    @Min(0)
     private Double distance;
 
     @Column
+    @Min(0)
     private Double price;
 
     @Column
+    @Min(0)
     private Integer seats;
 
     //schvalne eager, s flight budu chtit vzdy i destinace (pro ucely teto aplikace)

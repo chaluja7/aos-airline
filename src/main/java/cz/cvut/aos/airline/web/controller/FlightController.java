@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class FlightController extends AbstractController {
         Flight flight = getFlightFromWrapper(wrapper);
         try {
             flightService.persist(flight);
-        } catch (PersistenceException e) {
+        } catch (PersistenceException | ConstraintViolationException | DataIntegrityViolationException e) {
             throw new BadRequestException();
         }
 
@@ -114,7 +115,7 @@ public class FlightController extends AbstractController {
         flight.setId(flightId);
         try {
             flightService.merge(flight);
-        } catch (PersistenceException e) {
+        } catch (PersistenceException | ConstraintViolationException | DataIntegrityViolationException e) {
             throw new BadRequestException();
         }
     }
