@@ -1,6 +1,7 @@
 package cz.cvut.aos.airline.web.wrapper;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import org.springframework.hateoas.ResourceSupport;
 
 /**
  * Diky JacksonXmlRootElement anotaci se budou property i do xml serializovat dle @Json anotaci
@@ -10,7 +11,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * @since 22.10.16
  */
 @JacksonXmlRootElement(localName = "destination")
-public class CreateDestinationWrapper {
+public class CreateDestinationWrapper extends ResourceSupport {
 
     private String name;
 

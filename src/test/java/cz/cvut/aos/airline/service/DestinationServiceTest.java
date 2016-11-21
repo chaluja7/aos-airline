@@ -16,10 +16,10 @@ public class DestinationServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCRUD() {
-        final Double lat = 108.5;
-        final Double lat2 = 112.53;
+        final Double lat = 50.4;
+        final Double lat2 = 30.5;
 
-        Destination destination = getNewDestination("testDestination", lat, 124.44);
+        Destination destination = getNewDestination("testDestination", lat, 80.4);
         destinationService.persist(destination);
 
         Destination retrievedDestination = destinationService.find(destination.getId());

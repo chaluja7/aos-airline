@@ -8,6 +8,7 @@ import cz.cvut.aos.airline.web.wrapper.CreateDestinationWrapper;
 import cz.cvut.aos.airline.web.wrapper.DestinationWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.List;
  * @since 22.10.16
  */
 @RestController
+@RequestMapping(value = "/destination")
 public class DestinationController extends AbstractController {
 
     private static final String PATH = "/destination";
@@ -29,7 +31,7 @@ public class DestinationController extends AbstractController {
     @Autowired
     private DestinationService destinationService;
 
-    @RequestMapping(value = PATH + "/{destinationId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{destinationId}", method = RequestMethod.GET)
     public DestinationWrapper getDestination(@PathVariable Long destinationId) {
         DestinationWrapper destination = getDestinationWrapper(destinationService.find(destinationId));
         if(destination == null) {
@@ -39,7 +41,7 @@ public class DestinationController extends AbstractController {
         return destination;
     }
 
-    @RequestMapping(value = PATH, method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<DestinationWrapper> getDestinations(@RequestHeader(value = X_ORDER, required = false) String xOrder) {
         //zde je dle zadani v hlavicce X-Order pouze asc nebo desc - vyvozeno z toho, ze se radi automaticky dle jmena
         final boolean desc = xOrder != null && xOrder.equalsIgnoreCase("desc");
@@ -52,7 +54,7 @@ public class DestinationController extends AbstractController {
         return list;
     }
 
-    @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> createDestination(@RequestBody CreateDestinationWrapper wrapper) {
         if(wrapper == null) {
             throw new BadRequestException();
@@ -68,7 +70,7 @@ public class DestinationController extends AbstractController {
         return getResponseCreated(getDestinationWrapper(destinationService.find(destination.getId())), getResourceDestination(destination.getId()));
     }
 
-    @RequestMapping(value = PATH + "/{destinationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(value = "/{destinationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public void updateDestination(@PathVariable Long destinationId, @RequestBody CreateDestinationWrapper wrapper) {
         if(destinationService.find(destinationId) == null) {
             throw new ResourceNotFoundException();
@@ -87,7 +89,7 @@ public class DestinationController extends AbstractController {
         }
     }
 
-    @RequestMapping(value = PATH + "/{destinationId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{destinationId}", method = RequestMethod.DELETE)
     public void deleteDestination(@PathVariable Long destinationId) {
         Destination destination = destinationService.find(destinationId);
         if(destination == null) {
@@ -107,14 +109,11 @@ public class DestinationController extends AbstractController {
         if(destination == null) return null;
 
         DestinationWrapper wrapper = new DestinationWrapper();
-        wrapper.setId(destination.getId());
+        wrapper.add(ControllerLinkBuilder.linkTo(DestinationController.class).slash(destination.getId()).withSelfRel());
+        wrapper.setEntityId(destination.getId());
         wrapper.setName(destination.getName());
         wrapper.setLat(destination.getLat());
         wrapper.setLon(destination.getLon());
-
-        if(destination.getId() != null) {
-            wrapper.setUrl(getResourceDestination(destination.getId()));
-        }
 
         return wrapper;
     }

@@ -6,9 +6,7 @@ package cz.cvut.aos.airline.web.wrapper;
  */
 public class ReservationWrapper extends CreateReservationWrapper implements CommonWrappable {
 
-    private Long id;
-
-    private String url;
+    private Long entityId;
 
     private String created;
 
@@ -16,8 +14,6 @@ public class ReservationWrapper extends CreateReservationWrapper implements Comm
 
     //heslo je nutne v odpovedi mit, protoze se ho uzivatel musi nejak po vytvoreni rezeravce dozvedet
     private String password;
-
-    private String flightUrl;
 
     public String getCreated() {
         return created;
@@ -35,14 +31,6 @@ public class ReservationWrapper extends CreateReservationWrapper implements Comm
         this.state = state;
     }
 
-    public String getFlightUrl() {
-        return flightUrl;
-    }
-
-    public void setFlightUrl(String flightUrl) {
-        this.flightUrl = flightUrl;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -52,22 +40,12 @@ public class ReservationWrapper extends CreateReservationWrapper implements Comm
     }
 
     @Override
-    public Long getId() {
-        return id;
+    public Long getEntityId() {
+        return entityId;
     }
 
     @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getUrl() {
-        return url;
-    }
-
-    @Override
-    public void setUrl(String url) {
-        this.url = url;
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 }

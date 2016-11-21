@@ -14,6 +14,7 @@ import cz.cvut.aos.airline.web.wrapper.PayReservationWrapper;
 import cz.cvut.aos.airline.web.wrapper.ReservationWrapper;
 import cz.cvut.aos.airline.web.wrapper.UpdateReservationWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ import java.util.List;
  * @since 31.10.16
  */
 @RestController
+@RequestMapping(value = "/reservation")
 public class ReservationController extends AbstractController {
 
     private static final String PATH = "/reservation";
@@ -38,7 +40,7 @@ public class ReservationController extends AbstractController {
     @Autowired
     private FlightService flightService;
 
-    @RequestMapping(value = PATH + "/{reservationId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{reservationId}", method = RequestMethod.GET)
     public ReservationWrapper getReservation(@PathVariable Long reservationId) {
         ReservationWrapper reservation = getReservationWrapper(reservationService.find(reservationId));
         if(reservation == null) {
@@ -48,7 +50,7 @@ public class ReservationController extends AbstractController {
         return reservation;
     }
 
-    @RequestMapping(value = PATH, method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<ReservationWrapper> getReservations() {
         List<ReservationWrapper> list = new ArrayList<>();
         for(Reservation reservation : reservationService.findAll()) {
@@ -58,7 +60,7 @@ public class ReservationController extends AbstractController {
         return list;
     }
 
-    @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> createReservation(@RequestBody CreateReservationWrapper wrapper) {
         Reservation reservation = getReservationFromCreateWrapper(wrapper);
         if(reservation == null || reservation.getSeats() == null || reservation.getSeats() <= 0) {
@@ -74,7 +76,7 @@ public class ReservationController extends AbstractController {
         return getResponseCreated(getReservationWrapper(reservationService.find(reservation.getId())), getResourceDestination(reservation.getId()));
     }
 
-    @RequestMapping(value = PATH + "/{reservationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(value = "/{reservationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public void updateReservation(@PathVariable Long reservationId, @RequestBody UpdateReservationWrapper wrapper) {
         //tenhle PUT neni vubec idempotentni, ale vychazi ze zadani: Only reservation in the state “new” can be canceled.
         //neni jasne, co se ma stat, pokud zavola put na rezervaci, ktera new neni?
@@ -97,7 +99,7 @@ public class ReservationController extends AbstractController {
         }
     }
 
-    @RequestMapping(value = PATH + "/{reservationId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{reservationId}", method = RequestMethod.DELETE)
     public void deleteReservation(@PathVariable Long reservationId) {
         Reservation reservation = reservationService.find(reservationId);
         if(reservation == null) {
@@ -117,7 +119,7 @@ public class ReservationController extends AbstractController {
         }
     }
 
-    @RequestMapping(value = PATH + "/{reservationId}/payment", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(value = "/{reservationId}/payment", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> payReservation(@PathVariable Long reservationId, @RequestBody PayReservationWrapper wrapper) {
         Reservation reservation = reservationService.find(reservationId);
         if(reservation == null) {
@@ -144,22 +146,19 @@ public class ReservationController extends AbstractController {
         if(reservation == null) return null;
 
         ReservationWrapper wrapper = new ReservationWrapper();
-        wrapper.setId(reservation.getId());
+        wrapper.add(ControllerLinkBuilder.linkTo(ReservationController.class).slash(reservation.getId()).withSelfRel());
+        wrapper.setEntityId(reservation.getId());
         wrapper.setSeats(reservation.getSeats());
         wrapper.setState(reservation.getState().name());
         wrapper.setPassword(reservation.getPassword());
 
         if(reservation.getFlight() != null) {
             wrapper.setFlight(reservation.getFlight().getId());
-            wrapper.setFlightUrl(FlightController.getResourceDestination(reservation.getFlight().getId()));
+            wrapper.add(ControllerLinkBuilder.linkTo(FlightController.class).slash(reservation.getFlight().getId()).withRel("flight"));
         }
 
         if(reservation.getCreated() != null) {
             wrapper.setCreated(reservation.getCreated().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-        }
-
-        if(reservation.getId() != null) {
-            wrapper.setUrl(getResourceDestination(reservation.getId()));
         }
 
         return wrapper;

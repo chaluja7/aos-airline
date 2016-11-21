@@ -29,7 +29,7 @@ public class FlightServiceTest extends AbstractServiceTest {
         final String name1 = "Flight1";
         final String name2 = "Flight111";
 
-        Flight flight = getNewFlight(name1, 50.5, 50, 100.6, ZonedDateTime.now());
+        Flight flight = getNewFlight(name1, 50.5, 50, 89.6, ZonedDateTime.now());
         destinationService.persist(flight.getFrom());
         destinationService.persist(flight.getTo());
         flightService.persist(flight);
@@ -41,7 +41,7 @@ public class FlightServiceTest extends AbstractServiceTest {
         Assert.assertEquals(name1, retrievedFlight.getName());
 
 
-        Destination newDestination = DestinationServiceTest.getNewDestination("novaDestinace", 100.6, 50.6);
+        Destination newDestination = DestinationServiceTest.getNewDestination("novaDestinace", 89.6, 50.6);
         destinationService.persist(newDestination);
 
         retrievedFlight.setName(name2);
@@ -82,8 +82,8 @@ public class FlightServiceTest extends AbstractServiceTest {
         flight.setDistance(distance);
         flight.setDateOfDeparture(dateOfDeparture);
 
-        Destination destinationFrom = DestinationServiceTest.getNewDestination(UUID.randomUUID().toString(), 50.36, 124.44);
-        Destination destinationTo = DestinationServiceTest.getNewDestination(UUID.randomUUID().toString(), 45.36, 90.44);
+        Destination destinationFrom = DestinationServiceTest.getNewDestination(UUID.randomUUID().toString(), 50.36, 84.44);
+        Destination destinationTo = DestinationServiceTest.getNewDestination(UUID.randomUUID().toString(), 45.36, 89.44);
 
         flight.setFrom(destinationFrom);
         flight.setTo(destinationTo);

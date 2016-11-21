@@ -6,47 +6,15 @@ package cz.cvut.aos.airline.web.wrapper;
  */
 public class FlightWrapper extends CreateFlightWrapper implements CommonWrappable {
 
-    private Long id;
-
-    private String url;
-
-    private String fromUrl;
-
-    private String toUrl;
+    private Long entityId;
 
     @Override
-    public Long getId() {
-        return id;
+    public Long getEntityId() {
+        return entityId;
     }
 
     @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getUrl() {
-        return url;
-    }
-
-    @Override
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getFromUrl() {
-        return fromUrl;
-    }
-
-    public void setFromUrl(String fromUrl) {
-        this.fromUrl = fromUrl;
-    }
-
-    public String getToUrl() {
-        return toUrl;
-    }
-
-    public void setToUrl(String toUrl) {
-        this.toUrl = toUrl;
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 }

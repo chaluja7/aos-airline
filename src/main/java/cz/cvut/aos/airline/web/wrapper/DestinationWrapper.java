@@ -12,23 +12,15 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "destination")
 public class DestinationWrapper extends CreateDestinationWrapper implements CommonWrappable {
 
-    private Long id;
+    private Long entityId;
 
-    private String url;
-
-    public Long getId() {
-        return id;
+    @Override
+    public Long getEntityId() {
+        return entityId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    @Override
+    public void setEntityId(Long entityId) {
+        this.entityId = entityId;
     }
 }

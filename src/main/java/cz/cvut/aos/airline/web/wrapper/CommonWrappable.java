@@ -6,12 +6,8 @@ package cz.cvut.aos.airline.web.wrapper;
  */
 public interface CommonWrappable {
 
-    Long getId();
+    Long getEntityId();
 
-    void setId(Long id);
-
-    String getUrl();
-
-    void setUrl(String url);
+    void setEntityId(Long entityId);
 
 }

@@ -41,7 +41,7 @@ public class ReservationServiceTest extends AbstractServiceTest {
         Assert.assertNotNull(retrievedReservation);
         Assert.assertEquals(StateChoices.NEW, retrievedReservation.getState());
 
-        Flight newFlight = FlightServiceTest.getNewFlight("NejakyLet222", 100.56, 30, 49.5, ZonedDateTime.now());
+        Flight newFlight = FlightServiceTest.getNewFlight("NejakyLet222", 80.56, 30, 49.5, ZonedDateTime.now());
         newFlight.setFrom(reservation.getFlight().getFrom());
         newFlight.setTo(reservation.getFlight().getTo());
         flightService.persist(newFlight);
@@ -60,7 +60,7 @@ public class ReservationServiceTest extends AbstractServiceTest {
         Reservation reservation = new Reservation();
         reservation.setSeats(seats);
 
-        Flight flight = FlightServiceTest.getNewFlight("NejakyLet", 100.56, 30, 49.5, ZonedDateTime.now());
+        Flight flight = FlightServiceTest.getNewFlight("NejakyLet", 80.56, 30, 49.5, ZonedDateTime.now());
         reservation.setFlight(flight);
 
         return reservation;

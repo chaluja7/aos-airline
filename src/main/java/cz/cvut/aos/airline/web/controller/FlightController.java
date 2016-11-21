@@ -10,6 +10,7 @@ import cz.cvut.aos.airline.web.wrapper.CreateFlightWrapper;
 import cz.cvut.aos.airline.web.wrapper.FlightWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ import java.util.List;
  * @since 31.10.16
  */
 @RestController
+@RequestMapping(value = "/flight")
 public class FlightController extends AbstractController {
 
     private static final String PATH = "/flight";
@@ -38,7 +40,7 @@ public class FlightController extends AbstractController {
     @Autowired
     private DestinationService destinationService;
 
-    @RequestMapping(value = PATH + "/{flightId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{flightId}", method = RequestMethod.GET)
     public FlightWrapper getFlight(@PathVariable Long flightId) {
         FlightWrapper flight = getFlightWrapper(flightService.find(flightId));
         if(flight == null) {
@@ -48,7 +50,7 @@ public class FlightController extends AbstractController {
         return flight;
     }
 
-    @RequestMapping(value = PATH, method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<FlightWrapper>> getFlights(@RequestHeader(value = X_BASE_HEADER, required = false) Integer xBase,
                                                           @RequestHeader(value = X_OFFSET_HEADER, required = false) Integer xOffset,
                                                           @RequestHeader(value = X_ORDER, required = false) String xOrder,
@@ -85,7 +87,7 @@ public class FlightController extends AbstractController {
         return new ResponseEntity<>(list, httpHeaders, HttpStatus.OK);
     }
 
-    @RequestMapping(value = PATH, method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> createFlight(@RequestBody CreateFlightWrapper wrapper) {
         if(wrapper == null) {
             throw new BadRequestException();
@@ -101,7 +103,7 @@ public class FlightController extends AbstractController {
         return getResponseCreated(getFlightWrapper(flightService.find(flight.getId())), getResourceDestination(flight.getId()));
     }
 
-    @RequestMapping(value = PATH + "/{flightId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(value = "/{flightId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public void updateFlight(@PathVariable Long flightId, @RequestBody CreateFlightWrapper wrapper) {
         if(flightService.find(flightId) == null) {
             throw new ResourceNotFoundException();
@@ -120,7 +122,7 @@ public class FlightController extends AbstractController {
         }
     }
 
-    @RequestMapping(value = PATH + "/{flightId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{flightId}", method = RequestMethod.DELETE)
     public void deleteFlight(@PathVariable Long flightId) {
         Flight flight = flightService.find(flightId);
         if(flight == null) {
@@ -140,7 +142,8 @@ public class FlightController extends AbstractController {
         if(flight == null) return null;
 
         FlightWrapper wrapper = new FlightWrapper();
-        wrapper.setId(flight.getId());
+        wrapper.add(ControllerLinkBuilder.linkTo(FlightController.class).slash(flight.getId()).withSelfRel());
+        wrapper.setEntityId(flight.getId());
         wrapper.setName(flight.getName());
         wrapper.setDistance(flight.getDistance());
         wrapper.setSeats(flight.getSeats());
@@ -152,16 +155,12 @@ public class FlightController extends AbstractController {
 
         if(flight.getFrom() != null) {
             wrapper.setFrom(flight.getFrom().getId());
-            wrapper.setFromUrl(DestinationController.getResourceDestination(flight.getFrom().getId()));
+            wrapper.add(ControllerLinkBuilder.linkTo(DestinationController.class).slash(flight.getFrom().getId()).withRel("from"));
         }
 
         if(flight.getTo() != null) {
             wrapper.setTo(flight.getTo().getId());
-            wrapper.setToUrl(DestinationController.getResourceDestination(flight.getTo().getId()));
-        }
-
-        if(flight.getId() != null) {
-            wrapper.setUrl(getResourceDestination(flight.getId()));
+            wrapper.add(ControllerLinkBuilder.linkTo(DestinationController.class).slash(flight.getTo().getId()).withRel("to"));
         }
 
         return wrapper;
