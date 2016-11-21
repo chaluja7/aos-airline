@@ -1,5 +1,6 @@
 package cz.cvut.aos.airline.web.wrapper;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "destination")
 public class DestinationWrapper extends CreateDestinationWrapper implements CommonWrappable {
 
+    @JsonProperty("id")
     private Long entityId;
 
     @Override
