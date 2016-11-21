@@ -14,6 +14,17 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!-- filter slouzi pro rozhodnuti, co naservirovat pri dotazu na "/" dle Accept hlavicky-->
+    <filter>
+        <filter-name>rootContextAcceptHeaderFilter</filter-name>
+        <filter-class>cz.cvut.aos.airline.web.RootContextAcceptHeaderFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>rootContextAcceptHeaderFilter</filter-name>
+        <servlet-name>default</servlet-name>
+    </filter-mapping>
+
     <!-- takto by mohlo stacit -->
     <servlet-mapping>
         <servlet-name>default</servlet-name>
@@ -28,7 +39,7 @@
         <url-pattern>*.js</url-pattern>
     </servlet-mapping>
     <!-- end:takto by mohlo stacit -->
-    
+
     <servlet-mapping>
         <servlet-name>ApiServlet</servlet-name>
         <url-pattern>/</url-pattern>
