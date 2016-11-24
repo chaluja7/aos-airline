@@ -3,6 +3,8 @@ package cz.cvut.aos.airline.service;
 import cz.cvut.aos.airline.dao.FlightDao;
 import cz.cvut.aos.airline.entity.Flight;
 import cz.cvut.aos.airline.service.exception.UnknownOrderColumnException;
+import cz.cvut.aos.airline.service.geocodeapi.resource.Location;
+import cz.cvut.aos.airline.service.rome2rio.R2RProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,6 +23,9 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private FlightDao flightDao;
 
+    @Autowired
+    private R2RProvider r2RProvider;
+
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Flight find(long id) {
@@ -30,12 +35,14 @@ public class FlightServiceImpl implements FlightService {
     @Override
     @Transactional
     public void persist(Flight flight) {
+        getDistanceAndPrice(flight);
         flightDao.persist(flight);
     }
 
     @Override
     @Transactional
     public void merge(Flight flight) {
+        getDistanceAndPrice(flight);
         flightDao.merge(flight);
     }
 
@@ -67,5 +74,20 @@ public class FlightServiceImpl implements FlightService {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public int getNumberOfReservedSeats(long id) {
         return flightDao.getNumberOfReservedSeats(id);
+    }
+
+    private void getDistanceAndPrice(Flight flight) {
+        Location origin = new Location(flight.getFrom().getLat(), flight.getFrom().getLon());
+        Location destination = new Location(flight.getTo().getLat(), flight.getTo().getLon());
+
+        double distance = r2RProvider.getDistance(origin, destination);
+        double price = getPrice(distance);
+
+        flight.setDistance(distance);
+        flight.setPrice(price);
+    }
+
+    private double getPrice(double distance) {
+        return distance * 10; // 100km = 1000Kc
     }
 }
