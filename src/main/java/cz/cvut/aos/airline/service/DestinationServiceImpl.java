@@ -2,6 +2,9 @@ package cz.cvut.aos.airline.service;
 
 import cz.cvut.aos.airline.dao.DestinationDao;
 import cz.cvut.aos.airline.entity.Destination;
+import cz.cvut.aos.airline.service.geocodeapi.GoogleLocationProvider;
+import cz.cvut.aos.airline.service.geocodeapi.resource.Location;
+import cz.cvut.aos.airline.web.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +22,9 @@ public class DestinationServiceImpl implements DestinationService {
     @Autowired
     private DestinationDao destinationDao;
 
+    @Autowired
+    private GoogleLocationProvider googleLocationProvider;
+
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Destination find(long id) {
@@ -28,12 +34,14 @@ public class DestinationServiceImpl implements DestinationService {
     @Override
     @Transactional
     public void persist(Destination destination) {
+        getLocation(destination);
         destinationDao.persist(destination);
     }
 
     @Override
     @Transactional
     public void merge(Destination destination) {
+        getLocation(destination);
         destinationDao.merge(destination);
     }
 
@@ -53,5 +61,14 @@ public class DestinationServiceImpl implements DestinationService {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Destination> findAll(boolean desc) {
         return destinationDao.findAll(desc);
+    }
+
+    private void getLocation(Destination destination) {
+        Location location = googleLocationProvider.getLocationFromAddress(destination.getName());
+        if(location == null) {
+            throw new BadRequestException();
+        }
+        destination.setLat(location.getLat());
+        destination.setLon(location.getLng());
     }
 }

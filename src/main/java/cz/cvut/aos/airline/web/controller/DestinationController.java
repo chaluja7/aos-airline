@@ -63,7 +63,10 @@ public class DestinationController extends AbstractController {
         Destination destination = getDestinationFromWrapper(wrapper);
         try {
             destinationService.persist(destination);
-        } catch (PersistenceException | ConstraintViolationException | DataIntegrityViolationException e) {
+        } catch (BadRequestException |
+                PersistenceException |
+                ConstraintViolationException |
+                DataIntegrityViolationException e) {
             throw new BadRequestException();
         }
 
@@ -84,7 +87,10 @@ public class DestinationController extends AbstractController {
         destination.setId(destinationId);
         try {
             destinationService.merge(destination);
-        } catch (PersistenceException | ConstraintViolationException | DataIntegrityViolationException e) {
+        } catch (BadRequestException |
+                PersistenceException |
+                ConstraintViolationException |
+                DataIntegrityViolationException e) {
             throw new BadRequestException();
         }
     }
@@ -123,8 +129,9 @@ public class DestinationController extends AbstractController {
 
         Destination destination = new Destination();
         destination.setName(wrapper.getName());
-        destination.setLat(wrapper.getLat());
-        destination.setLon(wrapper.getLon());
+//        pocita se z Google geocode API
+//        destination.setLat(wrapper.getLat());
+//        destination.setLon(wrapper.getLon());
 
         return destination;
     }
