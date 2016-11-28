@@ -35,14 +35,14 @@ public class FlightServiceImpl implements FlightService {
     @Override
     @Transactional
     public void persist(Flight flight) {
-        getDistanceAndPrice(flight);
+        fillDistanceAndPriceToFlight(flight);
         flightDao.persist(flight);
     }
 
     @Override
     @Transactional
     public void merge(Flight flight) {
-        getDistanceAndPrice(flight);
+        fillDistanceAndPriceToFlight(flight);
         flightDao.merge(flight);
     }
 
@@ -76,7 +76,7 @@ public class FlightServiceImpl implements FlightService {
         return flightDao.getNumberOfReservedSeats(id);
     }
 
-    private void getDistanceAndPrice(Flight flight) {
+    private void fillDistanceAndPriceToFlight(Flight flight) {
         Location origin = new Location(flight.getFrom().getLat(), flight.getFrom().getLon());
         Location destination = new Location(flight.getTo().getLat(), flight.getTo().getLon());
 

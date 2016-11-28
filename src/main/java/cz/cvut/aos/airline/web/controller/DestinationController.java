@@ -2,6 +2,7 @@ package cz.cvut.aos.airline.web.controller;
 
 import cz.cvut.aos.airline.entity.Destination;
 import cz.cvut.aos.airline.service.DestinationService;
+import cz.cvut.aos.airline.service.exception.UnknownLocationNameException;
 import cz.cvut.aos.airline.web.exception.BadRequestException;
 import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
 import cz.cvut.aos.airline.web.wrapper.CreateDestinationWrapper;
@@ -63,7 +64,7 @@ public class DestinationController extends AbstractController {
         Destination destination = getDestinationFromWrapper(wrapper);
         try {
             destinationService.persist(destination);
-        } catch (BadRequestException |
+        } catch (UnknownLocationNameException |
                 PersistenceException |
                 ConstraintViolationException |
                 DataIntegrityViolationException e) {
@@ -87,7 +88,7 @@ public class DestinationController extends AbstractController {
         destination.setId(destinationId);
         try {
             destinationService.merge(destination);
-        } catch (BadRequestException |
+        } catch (UnknownLocationNameException |
                 PersistenceException |
                 ConstraintViolationException |
                 DataIntegrityViolationException e) {
@@ -129,9 +130,7 @@ public class DestinationController extends AbstractController {
 
         Destination destination = new Destination();
         destination.setName(wrapper.getName());
-//        pocita se z Google geocode API
-//        destination.setLat(wrapper.getLat());
-//        destination.setLon(wrapper.getLon());
+//        LAT a LON se pocita z Google geocode API pri merge/persist
 
         return destination;
     }
