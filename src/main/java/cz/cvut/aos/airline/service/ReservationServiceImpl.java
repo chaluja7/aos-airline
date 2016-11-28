@@ -80,6 +80,12 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Reservation findByIdAndPassword(long id, String password) {
+        return reservationDao.findByIdAndPassword(id, password);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Reservation> findAll() {
         return reservationDao.findAll();
     }

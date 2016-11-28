@@ -22,9 +22,10 @@ public class RootContextAcceptHeaderFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
         String accept = httpServletRequest.getHeader("Accept");
-        String contextPath = httpServletRequest.getContextPath();
+        String requestURI = httpServletRequest.getRequestURI();
+        String method = httpServletRequest.getMethod();
 
-        if(("".equals(contextPath) || "/".equals(contextPath)) && ("application/json".equals(accept) || "application/xml".equals(accept))) {
+        if(("".equals(requestURI) || "/".equals(requestURI)) && "GET".equals(method) && ("application/json".equals(accept) || "application/xml".equals(accept))) {
             httpServletResponse.sendRedirect("/app");
         } else {
             filterChain.doFilter(servletRequest, servletResponse);

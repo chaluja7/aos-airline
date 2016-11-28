@@ -2,6 +2,7 @@ package cz.cvut.aos.airline.service;
 
 import cz.cvut.aos.airline.entity.Destination;
 import cz.cvut.aos.airline.entity.Flight;
+import cz.cvut.aos.airline.service.exception.UnknownLocationNameException;
 import cz.cvut.aos.airline.service.exception.UnknownOrderColumnException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class FlightServiceTest extends AbstractServiceTest {
     private DestinationService destinationService;
 
     @Test
-    public void testCRUD() {
+    public void testCRUD() throws UnknownLocationNameException {
         final String name1 = "Flight1";
         final String name2 = "Flight111";
 
@@ -41,7 +42,7 @@ public class FlightServiceTest extends AbstractServiceTest {
         Assert.assertEquals(name1, retrievedFlight.getName());
 
 
-        Destination newDestination = DestinationServiceTest.getNewDestination("novaDestinace", 89.6, 50.6);
+        Destination newDestination = DestinationServiceTest.getNewDestination("New York", 89.6, 50.6);
         destinationService.persist(newDestination);
 
         retrievedFlight.setName(name2);

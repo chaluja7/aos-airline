@@ -9,6 +9,9 @@ import cz.cvut.aos.airline.service.exception.InvalidStateChangeException;
 import cz.cvut.aos.airline.service.exception.NotEnoughSeatsException;
 import cz.cvut.aos.airline.web.exception.BadRequestException;
 import cz.cvut.aos.airline.web.exception.ResourceNotFoundException;
+import cz.cvut.aos.airline.web.interceptor.CheckAccess;
+import cz.cvut.aos.airline.web.interceptor.CheckedResourceId;
+import cz.cvut.aos.airline.web.interceptor.XPasswordHeader;
 import cz.cvut.aos.airline.web.wrapper.CreateReservationWrapper;
 import cz.cvut.aos.airline.web.wrapper.PayReservationWrapper;
 import cz.cvut.aos.airline.web.wrapper.ReservationWrapper;
@@ -40,8 +43,10 @@ public class ReservationController extends AbstractController {
     @Autowired
     private FlightService flightService;
 
+    @CheckAccess
     @RequestMapping(value = "/{reservationId}", method = RequestMethod.GET)
-    public ReservationWrapper getReservation(@PathVariable Long reservationId) {
+    public ReservationWrapper getReservation(@PathVariable @CheckedResourceId Long reservationId,
+                                             @RequestHeader(value = X_PASSWORD, required = false) @XPasswordHeader String xPassword) {
         ReservationWrapper reservation = getReservationWrapper(reservationService.find(reservationId));
         if(reservation == null) {
             throw new ResourceNotFoundException();
@@ -76,8 +81,11 @@ public class ReservationController extends AbstractController {
         return getResponseCreated(getReservationWrapper(reservationService.find(reservation.getId())), getResourceDestination(reservation.getId()));
     }
 
+    @CheckAccess
     @RequestMapping(value = "/{reservationId}", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public void updateReservation(@PathVariable Long reservationId, @RequestBody UpdateReservationWrapper wrapper) {
+    public void updateReservation(@PathVariable @CheckedResourceId Long reservationId,
+                                  @RequestBody UpdateReservationWrapper wrapper,
+                                  @RequestHeader(value = X_PASSWORD, required = false) @XPasswordHeader String xPassword) {
         //tenhle PUT neni vubec idempotentni, ale vychazi ze zadani: Only reservation in the state “new” can be canceled.
         //neni jasne, co se ma stat, pokud zavola put na rezervaci, ktera new neni?
 

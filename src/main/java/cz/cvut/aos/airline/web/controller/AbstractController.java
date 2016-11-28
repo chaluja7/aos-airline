@@ -21,6 +21,8 @@ public abstract class AbstractController {
 
     protected static final String X_ORDER = "X-Order";
 
+    protected static final String X_PASSWORD = "X-Password";
+
     protected static final String X_FILTER = "X-Filter";
 
     protected ResponseEntity<?> getResponseCreated(Object body, String location) {

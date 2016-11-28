@@ -1,0 +1,46 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+    <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener" />
+
+    <!-- zabezpeceni endpointu. mame rest api, tak nechceme udrzovat zadnou session (jmeno a heslo prijde v kazdem requestu, ktery to vyzaduje) -->
+    <http use-expressions="true" create-session="stateless">
+        <!-- zabezpeceni destination -->
+        <intercept-url pattern="/destination" method="POST" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/destination/*" method="PUT" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/destination/*" method="DELETE" access="hasRole('ROLE_ADMIN')"/>
+
+        <!-- zabezpeceni flight -->
+        <intercept-url pattern="/flight" method="POST" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/flight/*" method="PUT" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/flight/*" method="DELETE" access="hasRole('ROLE_ADMIN')"/>
+
+        <!-- zabezpeceni reservation -->
+        <intercept-url pattern="/reservation" method="GET" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"/>
+        <intercept-url pattern="/reservation/*" method="DELETE" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"/>
+
+        <!-- vyuzivame http basic authentication -->
+        <http-basic />
+        <!-- zakazeme csrf hlavicky, protoze pouzivame stateless security -->
+        <csrf disabled="true"/>
+    </http>
+
+    <!-- uzivatele nemame nijak ulozene v databazi, protoze to snad v souladu se zadanim neni treba -->
+    <!-- pokud by to bylo vyzadovano, vznikla by tabulka users a roles. Pridelovani role by pak probihalo tak -->
+    <!-- ze bychom sahli do databaze pro role uzivatele dle jeho jmena a hesla -->
+    <!-- k tomu bychom vyuzili vlastni AuthenticationProvider, ktery by dedil z AbstractUserDetailsAuthenticationProvider -->
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="admin" password="123456" authorities="ROLE_ADMIN" />
+                <user name="manager" password="123456" authorities="ROLE_MANAGER" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>

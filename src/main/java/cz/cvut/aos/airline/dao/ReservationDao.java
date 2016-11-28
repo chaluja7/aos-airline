@@ -45,4 +45,12 @@ public class ReservationDao extends AbstractGenericHibernateDao<Reservation> {
             throw new InvalidReservationDeleteException();
         }
     }
+
+    public Reservation findByIdAndPassword(long id, String password) {
+        return (Reservation) sessionFactory.getCurrentSession()
+                        .createQuery("select r from Reservation r where r.id = :id and r.password = :password")
+                        .setParameter("id", id)
+                        .setParameter("password", password)
+                        .uniqueResult();
+    }
 }

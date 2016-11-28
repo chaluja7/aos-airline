@@ -65,12 +65,11 @@ public class DestinationServiceImpl implements DestinationService {
 
     private void fillLocationToDestination(Destination destination) throws UnknownLocationNameException {
         Location location = googleLocationProvider.getLocationFromAddress(destination.getName());
+        //pokud je location null tak se nic nevyplni
 
-        if(location == null) {
-            throw new UnknownLocationNameException();
+        if(location != null) {
+            destination.setLat(location.getLat());
+            destination.setLon(location.getLng());
         }
-
-        destination.setLat(location.getLat());
-        destination.setLon(location.getLng());
     }
 }

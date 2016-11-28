@@ -33,6 +33,8 @@ public interface ReservationService {
 
     void deleteWithStateControl(long id, StateChoices currentState) throws InvalidReservationDeleteException;
 
+    Reservation findByIdAndPassword(long id, String password);
+
     List<Reservation> findAll();
 
 }

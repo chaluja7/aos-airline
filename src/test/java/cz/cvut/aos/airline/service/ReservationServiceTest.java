@@ -5,6 +5,7 @@ import cz.cvut.aos.airline.entity.Reservation;
 import cz.cvut.aos.airline.entity.StateChoices;
 import cz.cvut.aos.airline.service.exception.InvalidStateChangeException;
 import cz.cvut.aos.airline.service.exception.NotEnoughSeatsException;
+import cz.cvut.aos.airline.service.exception.UnknownLocationNameException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ReservationServiceTest extends AbstractServiceTest {
     private ReservationService reservationService;
 
     @Test
-    public void testCRUD() throws NotEnoughSeatsException, InvalidStateChangeException {
+    public void testCRUD() throws NotEnoughSeatsException, InvalidStateChangeException, UnknownLocationNameException {
         Reservation reservation = getNewReservation(2);
         destinationService.persist(reservation.getFlight().getFrom());
         destinationService.persist(reservation.getFlight().getTo());
@@ -54,6 +55,12 @@ public class ReservationServiceTest extends AbstractServiceTest {
         reservationService.delete(retrievedReservation.getId());
         retrievedReservation = reservationService.find(retrievedReservation.getId());
         Assert.assertNull(retrievedReservation);
+    }
+
+    @Test
+    public void testFindByIdAndPassword() {
+        Reservation byIdAndPassword = reservationService.findByIdAndPassword(1L, "heslo1");
+        Assert.assertNotNull(byIdAndPassword);
     }
 
     public static Reservation getNewReservation(Integer seats) {
