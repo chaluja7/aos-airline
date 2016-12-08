@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+    <!-- CXF servlet -->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet>
         <servlet-name>ApiServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -50,6 +57,12 @@
         <url-pattern>*.js</url-pattern>
     </servlet-mapping>
     <!-- end:takto by mohlo stacit -->
+
+    <!-- all our webservices are mapped under this URI pattern -->
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ApiServlet</servlet-name>

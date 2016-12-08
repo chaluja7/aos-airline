@@ -12,6 +12,6 @@ INSERT INTO flights(id, name, price, seats, distance, dateofdeparture, destinati
 INSERT INTO flights(id, name, price, seats, distance, dateofdeparture, destination_from_id, destination_to_id) VALUES (6, 'Flight 6', 149.5, 70, 308.5, '2013-10-24 11:15:41', 4, 3);
 INSERT INTO flights(id, name, price, seats, distance, dateofdeparture, destination_from_id, destination_to_id) VALUES (7, 'Flight 7', 149.5, 70, 308.5, '2012-10-24 11:15:41', 1, 4);
 
-INSERT INTO reservations(id, seats, password, state, created, flight_id) VALUES (1, 2, 'heslo1', 'NEW', '2016-10-22 10:05:40', 1);
+INSERT INTO reservations(id, seats, password, state, created, flight_id) VALUES (1, 2, 'heslo1', 'PAID', '2016-10-22 10:05:40', 1);
 INSERT INTO reservations(id, seats, password, state, created, flight_id) VALUES (2, 5, 'heslo2', 'NEW', '2016-10-23 11:15:50', 1);
 INSERT INTO reservations(id, seats, password, state, created, flight_id) VALUES (3, 1, 'heslo3', 'CANCELLED', '2016-10-24 12:25:30', 1);

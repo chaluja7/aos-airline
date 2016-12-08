@@ -81,4 +81,11 @@ public class Reservation extends AbstractEntity {
     public void setFlight(Flight flight) {
         this.flight = flight;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("ID: ").append(getId()).append("; SEATS: ").append(getSeats()).append("; STATE: ")
+            .append(getState().name()).append("; FLIGHT_ID: ").append(getFlight().getId()).toString();
+    }
+
 }
