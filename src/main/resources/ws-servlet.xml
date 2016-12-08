@@ -7,6 +7,8 @@
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
+    <bean id="printTicketXPasswordInterceptor" class="cz.cvut.aos.airline.web.ws.PrintTicketXPasswordInterceptor"/>
+
     <!-- cesta k wsdl bude localhost:8080/ws/downloadTicket?wsdl -->
     <!-- prefix /ws se vezme s web.xml - pro tuto uri je definovan cxf servlet -->
     <jaxws:endpoint id="printTicketWSImpl"
@@ -15,6 +17,13 @@
                     serviceName="s:PrintTicketServiceCustomized"
                     address="/downloadTicket"
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
-                    xmlns:s="http://service.jaxws.cxf.apache.org/service"/>
+                    xmlns:s="http://service.jaxws.cxf.apache.org/service">
+
+        <!-- nez se zacne tisknout, tak se zkontroluje pritomnost spravne x-password hlavicky -->
+        <jaxws:inInterceptors>
+            <ref bean="printTicketXPasswordInterceptor"/>
+        </jaxws:inInterceptors>
+
+    </jaxws:endpoint>
 
 </beans>
