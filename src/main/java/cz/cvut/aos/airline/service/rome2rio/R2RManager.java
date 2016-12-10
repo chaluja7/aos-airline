@@ -19,15 +19,15 @@ public class R2RManager {
 
     // https://www.rome2rio.com/api/1.4/json/Search?key=&oName=Bern&dName=Zurich&noRideshare
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = "b22pmi9y";
 
-    private static final String R2R_API_URL = "https://www.rome2rio.com";
+    private static final String R2R_API_URL = "http://free.rome2rio.com";
 
     private static final String R2R_JSON_URI = "api/1.4/json/Search";
 
-    private static final String ORIGIN_PARAM = "oPos";
+    private static final String ORIGIN_PARAM = "oName";
 
-    private static final String DESTINATION_PARAM = "dPos";
+    private static final String DESTINATION_PARAM = "dName";
 
     private static final String API_KEY_PARAM = "key";
 
@@ -39,13 +39,13 @@ public class R2RManager {
      * @param destination lokace: lat, lng
      * @return vzdalenost
      */
-    public R2RResource getR2RDistance(Location origin, Location destination) {
-        HttpEntity<R2RResource> googleAddressResponse = getDistanceResponse(origin, destination, R2RResource.class);
-        return googleAddressResponse.getBody();
+    public R2RResource getR2RFlightDistance(String origin, String destination) {
+        HttpEntity<R2RResource> r2rDistanceResponse = getDistanceResponse(origin, destination, R2RResource.class);
+        return r2rDistanceResponse.getBody();
     }
 
 
-    private <T> HttpEntity<T> getDistanceResponse(Location origin, Location destination, Class<T> type) {
+    private <T> HttpEntity<T> getDistanceResponse(String origin, String destination, Class<T> type) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
@@ -62,7 +62,7 @@ public class R2RManager {
         return new RestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.GET, entity, type);
     }
 
-    public double getR2RDistanceTest(Location origin, Location destination) {
+    public double getR2REarthDistance(Location origin, Location destination) {
         return (double) Math.round(DistanceCalculator.distance(origin.getLat(), origin.getLng(), destination.getLat(), destination.getLng(), "K") * 100.0) / 100.0;
     }
 }

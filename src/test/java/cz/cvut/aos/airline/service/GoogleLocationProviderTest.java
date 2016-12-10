@@ -27,13 +27,8 @@ public class GoogleLocationProviderTest extends AbstractServiceTest {
 
     @Test
     public void testNoLocation() {
-        String testAddress = "york";
-        Location expectedLocation = new Location(53.95996510000001, -1.0872979);
+        String testAddress = "sdgsdfdfgfd";
         Location actualLocation = googleLocationProvider.getLocationFromAddress(testAddress);
-        Assert.assertEquals(expectedLocation, actualLocation);
-
-        testAddress = "sdgsdfdfgfd";
-        actualLocation = googleLocationProvider.getLocationFromAddress(testAddress);
         Assert.assertNull(actualLocation);
     }
 

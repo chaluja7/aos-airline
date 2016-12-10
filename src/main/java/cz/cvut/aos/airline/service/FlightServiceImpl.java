@@ -77,14 +77,11 @@ public class FlightServiceImpl implements FlightService {
     }
 
     private void fillDistanceAndPriceToFlight(Flight flight) {
-        Location origin = new Location(flight.getFrom().getLat(), flight.getFrom().getLon());
-        Location destination = new Location(flight.getTo().getLat(), flight.getTo().getLon());
-
-        double distance = r2RProvider.getDistance(origin, destination);
+        double distance = r2RProvider.getDistance(flight.getFrom().getName(), flight.getTo().getName());
         double price = getPrice(distance);
 
         flight.setDistance(distance);
-        flight.setPrice(price);
+        flight.setPrice((double) Math.round(price * 100.0) / 100.0);
     }
 
     private double getPrice(double distance) {
