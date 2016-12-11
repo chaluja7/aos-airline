@@ -56,6 +56,10 @@
         <servlet-name>default</servlet-name>
         <url-pattern>*.js</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.png</url-pattern>
+    </servlet-mapping>
     <!-- end:takto by mohlo stacit -->
 
     <!-- all our webservices are mapped under this URI pattern -->

@@ -47,6 +47,7 @@ public class ReservationController extends AbstractController {
     @RequestMapping(value = "/{reservationId}", method = RequestMethod.GET)
     public ReservationWrapper getReservation(@PathVariable @CheckedResourceId Long reservationId,
                                              @RequestHeader(value = X_PASSWORD, required = false) @XPasswordHeader String xPassword) {
+        System.out.println("______ " + xPassword);
         ReservationWrapper reservation = getReservationWrapper(reservationService.find(reservationId));
         if(reservation == null) {
             throw new ResourceNotFoundException();
