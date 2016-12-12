@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class R2RResource {
 
-    ArrayList<R2RRoute> routes;
+    private ArrayList<R2RRoute> routes;
 
     public ArrayList<R2RRoute> getRoutes() {
         return routes;

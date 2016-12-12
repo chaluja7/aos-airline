@@ -9,8 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class GoogleResult {
 
-    GeometryResult geometry;
-    String formatted_address;
+    private GeometryResult geometry;
+
+    private String formatted_address;
 
     public GeometryResult getGeometry() {
         return geometry;

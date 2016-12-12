@@ -84,8 +84,19 @@ public class Reservation extends AbstractEntity {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("ID: ").append(getId()).append("; SEATS: ").append(getSeats()).append("; STATE: ")
-            .append(getState().name()).append("; FLIGHT_ID: ").append(getFlight().getId()).toString();
+        StringBuilder builder = new StringBuilder().append("ID: ").append(getId()).append("; SEATS: ").append(getSeats()).append("; STATE: ")
+            .append(getState().name()).append("; FLIGHT_ID: ").append(getFlight().getId());
+
+        if(getFlight() != null) {
+            if (getFlight().getFrom() != null && getFlight().getTo() != null) {
+                //from - to
+                builder.append("; FROM: ").append(getFlight().getFrom().getName()).append(" ").append("TO: ").append(getFlight().getTo().getName());
+            }
+
+            builder.append("; DISTANCE: ").append(getFlight().getDistance()).append("; PRICE PER SEAT: ").append(getFlight().getPrice());
+        }
+
+        return builder.toString();
     }
 
 }
