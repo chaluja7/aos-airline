@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * JMS consumer - stahne zpravu z fronty a posle email na danou adresu.
@@ -29,7 +30,7 @@ public class JmsMessageListener {
         //content je ve skutecnosti pouze String, nicmene pripadne je v nem samozrejme mozne posilat jakykoliv obsah (napr pdf soubor)
         byte[] content = new byte[(int) message.getBodyLength()];
         message.readBytes(content);
-        final String messageBody = new String(content);
+        final String messageBody = new String(content, StandardCharsets.UTF_8);
 
         if(!StringUtils.isEmpty(emailAddress) && !StringUtils.isEmpty(messageBody)) {
             //pred vypisem chvili pockam

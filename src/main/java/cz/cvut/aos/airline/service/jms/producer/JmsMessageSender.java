@@ -10,6 +10,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import javax.jms.BytesMessage;
+import java.nio.charset.StandardCharsets;
 
 /**
  * JMS producer - posle do fronty pozadavek na zaslani mailu na adresu.
@@ -52,7 +53,7 @@ public class JmsMessageSender {
 
             //zde zdanlive prebytecne pisu string jako byte[] (mohl bych poslat rovnou String)
             //timto ale simuluji, ze umim pripadne poslat jakykoliv vygenerovany soubor (napr pdf)
-            bytesMessage.writeBytes(reservation.toString().getBytes());
+            bytesMessage.writeBytes(reservation.toString().getBytes(StandardCharsets.UTF_8));
             return bytesMessage;
         };
 

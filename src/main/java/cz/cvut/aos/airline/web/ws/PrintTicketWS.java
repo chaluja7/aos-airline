@@ -14,9 +14,13 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.soap.MTOM;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
+ * Bottom up ws - nemam zadne wsdl - to se naopak vygeneruje (z anotaci  zde)
+ *
+ * vygenerovane WSDL je na adrese /ws/downloadTicket?wsdl
+ *
  * @author jakubchalupa
  * @since 08.12.16
  */
@@ -30,8 +34,6 @@ public class PrintTicketWS {
 
     private static final String TICKET_CONTENT_TYPE = "text/plain";
 
-    private static final String TICKET_ENCODING = "UTF-8";
-
     private static final String TICKET_FILE_APPENDIX = ".txt";
 
     @WebMethod(operationName = "downloadTicket")
@@ -42,7 +44,7 @@ public class PrintTicketWS {
             throw new IllegalArgumentException("invalid reservationId");
         }
 
-        ByteDataSource byteDataSource = new ByteDataSource(reservation.toString().getBytes(Charset.forName(TICKET_ENCODING)), TICKET_CONTENT_TYPE);
+        ByteDataSource byteDataSource = new ByteDataSource(reservation.toString().getBytes(StandardCharsets.UTF_8), TICKET_CONTENT_TYPE);
         byteDataSource.setName(new StringBuilder("reservation_").append(reservation.getId()).append(TICKET_FILE_APPENDIX).toString());
         return new DataHandler(byteDataSource);
     }
