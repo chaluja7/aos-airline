@@ -106,6 +106,12 @@
             <version>0.21.0.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
 
         <!-- WEB -->
         <dependency>
@@ -235,6 +241,20 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>3.1.8</version>
+        </dependency>
+
+        <!-- AMQ -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+            <version>5.14.2</version>
+        </dependency>
+
+        <!-- APACHE commons validator - validate email etc. -->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.4.0</version>
         </dependency>
 
     </dependencies>

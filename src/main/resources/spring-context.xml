@@ -15,6 +15,9 @@
     <!-- web services -->
     <import resource="ws-servlet.xml"/>
 
+    <!-- JMS - AMQ -->
+    <import resource="jms-context.xml"/>
+
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="packagesToScan" value="cz.cvut.aos.airline.entity"/>
