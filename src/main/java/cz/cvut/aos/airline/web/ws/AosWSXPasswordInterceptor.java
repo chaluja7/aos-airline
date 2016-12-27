@@ -1,6 +1,7 @@
 package cz.cvut.aos.airline.web.ws;
 
 import cz.cvut.aos.airline.entity.Reservation;
+import cz.cvut.aos.airline.generated.ws.SendTicketToEmail;
 import cz.cvut.aos.airline.service.ReservationService;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
@@ -17,14 +18,14 @@ import java.util.Map;
  * @author jakubchalupa
  * @since 08.12.16
  */
-public class PrintTicketXPasswordInterceptor extends AbstractSoapInterceptor {
+public class AosWSXPasswordInterceptor extends AbstractSoapInterceptor {
 
     @Autowired
     private ReservationService reservationService;
 
     private static final String X_PASSWORD_HEADER = "x-password";
 
-    public PrintTicketXPasswordInterceptor() {
+    public AosWSXPasswordInterceptor() {
         //interceptor chci spustit jeste pred vlastnim telem metody, ktera tiskne rezervaci
         super(Phase.PRE_LOGICAL);
     }
@@ -33,7 +34,17 @@ public class PrintTicketXPasswordInterceptor extends AbstractSoapInterceptor {
     public void handleMessage(SoapMessage soapMessage) throws Fault {
         //ziskam ID rezervace, kterou chceme vytisknout
         List attributes = soapMessage.getContent(List.class); // message parts
-        Long reservationId = (Long) attributes.get(0);
+
+        //pouziti interceptoru je pouze takove, ze reservationId prijde jako prvni atribut nebo jako element v SendTicketToEmail.class
+        Long reservationId;
+        Object o = attributes.get(0);
+        if(o instanceof Long) {
+            reservationId = (Long) o;
+        } else if(o instanceof SendTicketToEmail) {
+            reservationId = ((SendTicketToEmail) o).getReservationId();
+        } else {
+            throw new RuntimeException();
+        }
 
         //a ziskam x-password hlavicku
         Map<String, List<String>> headers = CastUtils.cast((Map) soapMessage.get(Message.PROTOCOL_HEADERS));

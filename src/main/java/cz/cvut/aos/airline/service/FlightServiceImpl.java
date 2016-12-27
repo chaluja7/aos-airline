@@ -3,7 +3,6 @@ package cz.cvut.aos.airline.service;
 import cz.cvut.aos.airline.dao.FlightDao;
 import cz.cvut.aos.airline.entity.Flight;
 import cz.cvut.aos.airline.service.exception.UnknownOrderColumnException;
-import cz.cvut.aos.airline.service.geocodeapi.resource.Location;
 import cz.cvut.aos.airline.service.rome2rio.R2RProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,14 +76,16 @@ public class FlightServiceImpl implements FlightService {
     }
 
     private void fillDistanceAndPriceToFlight(Flight flight) {
-        double distance = r2RProvider.getDistance(flight.getFrom().getName(), flight.getTo().getName());
-        double price = getPrice(distance);
+        Double distance = r2RProvider.getDistance(flight.getFrom().getName(), flight.getTo().getName());
+        Double price = getPrice(distance);
 
         flight.setDistance(distance);
-        flight.setPrice((double) Math.round(price * 100.0) / 100.0);
+        if(price != null) {
+            flight.setPrice((double) Math.round(price * 100.0) / 100.0);
+        }
     }
 
-    private double getPrice(double distance) {
-        return distance * 10; // 100km = 1000Kc
+    private Double getPrice(Double distance) {
+        return distance == null ? null : distance * 10; // 100km = 1000Kc
     }
 }

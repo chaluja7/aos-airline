@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class R2RRoute {
 
-    double distance;
+    private double distance;
 
     public double getDistance() {
         return distance;

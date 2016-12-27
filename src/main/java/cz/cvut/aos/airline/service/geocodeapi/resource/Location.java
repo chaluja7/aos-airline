@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Location {
 
     private double lat;
+
     private double lng;
 
     public Location() {

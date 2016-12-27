@@ -23,16 +23,12 @@ public class Destination extends AbstractEntity {
     @NotNull
     private String name;
 
-    @Column(nullable = false)
     @Min(-90)
     @Max(90)
-    @NotNull
     private Double lat;
 
-    @Column(nullable = false)
     @Min(-180)
     @Max(180)
-    @NotNull
     private Double lon;
 
     public String getName() {

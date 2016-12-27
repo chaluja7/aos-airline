@@ -15,4 +15,18 @@
     
 ## Deploy ##
 * Aplikace testována na Tomcat 8.5.6
+
+## Active MQ ##
+* Aplikace vyžaduje spuštěný Active MQ
+  * Stáhněte a rozbalte Active MQ: ``http://activemq.apache.org/``
+  * Spusťte Active MQ
+  
+    ``bin/activemq start``
+        
+  * Konzole poběží defaultně na: ``http://localhost:8161/admin/``
+    * login: ``admin``
+    * heslo: ``admin``
+  * Broker URL musí být ponecháno defaultní: ``tcp://localhost:61616``
+      
+        
   

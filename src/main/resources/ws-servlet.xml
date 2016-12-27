@@ -7,7 +7,7 @@
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
-    <bean id="printTicketXPasswordInterceptor" class="cz.cvut.aos.airline.web.ws.PrintTicketXPasswordInterceptor"/>
+    <bean id="aosWSXPasswordInterceptor" class="cz.cvut.aos.airline.web.ws.AosWSXPasswordInterceptor"/>
 
     <!-- cesta k wsdl bude localhost:8080/ws/downloadTicket?wsdl -->
     <!-- prefix /ws se vezme s web.xml - pro tuto uri je definovan cxf servlet -->
@@ -21,7 +21,19 @@
 
         <!-- nez se zacne tisknout, tak se zkontroluje pritomnost spravne x-password hlavicky -->
         <jaxws:inInterceptors>
-            <ref bean="printTicketXPasswordInterceptor"/>
+            <ref bean="aosWSXPasswordInterceptor"/>
+        </jaxws:inInterceptors>
+
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="sendEmailWSImpl"
+                    implementor="cz.cvut.aos.airline.web.ws.SendEmailWSImpl"
+                    address="/sendTicketToEmail"
+                    wsdlLocation="wsdl/sendTicketToEmail.wsdl">
+
+        <!-- nez se zada mail do fronty, tak se zkontroluje pritomnost spravne x-password hlavicky -->
+        <jaxws:inInterceptors>
+            <ref bean="aosWSXPasswordInterceptor"/>
         </jaxws:inInterceptors>
 
     </jaxws:endpoint>
