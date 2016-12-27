@@ -2,21 +2,24 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
     <context:component-scan base-package="cz.cvut.aos.airline.service"/>
     <context:component-scan base-package="cz.cvut.aos.airline.dao"/>
 
-    <tx:annotation-driven transaction-manager="transactionManager" />
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- web services -->
     <import resource="ws-servlet.xml"/>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="cz.cvut.aos.airline.entity"/>
         <property name="hibernateProperties">
             <props>
@@ -25,40 +28,49 @@
                 <prop key="hibernate.format_sql">${hibernate.formatSql}</prop>
                 <prop key="hibernate.hbm2ddl.auto">${hibernate.auto}</prop>
                 <prop key="hibernate.hbm2ddl.import_files">${hibernate.autoImportFiles}</prop>
-                <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
+                <prop key="hibernate.current_session_context_class">
+                    org.springframework.orm.hibernate5.SpringSessionContext
+                </prop>
             </props>
         </property>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+    <!-- Web Sockets -->
+    <websocket:handlers>
+        <websocket:mapping path="/clients" handler="wsHandler"/>
+    </websocket:handlers>
+
+    <bean id="wsHandler" class="cz.cvut.aos.airline.web.websocket.ParallelClientsHandler"/>
 
     <!-- pokud je spusteno se spring profilem "hsql" tak se pouzije inmemory databaze -->
     <!-- -Dspring.profiles.active=hsql -->
     <!-- napr mvn clean install -Dspring.profiles.active=hsql -->
     <beans profile="hsql">
-        <context:property-placeholder location="classpath:aos-flight-hsql.properties" />
+        <context:property-placeholder location="classpath:aos-flight-hsql.properties"/>
 
         <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName" value="${jdbc.driver}" />
-            <property name="url" value="${jdbc.url}" />
-            <property name="username" value="${jdbc.username}" />
-            <property name="password" value="" />
+            <property name="driverClassName" value="${jdbc.driver}"/>
+            <property name="url" value="${jdbc.url}"/>
+            <property name="username" value="${jdbc.username}"/>
+            <property name="password" value=""/>
         </bean>
     </beans>
 
     <beans profile="!hsql">
-        <context:property-placeholder location="classpath:aos-flight-postgres.properties" />
+        <context:property-placeholder location="classpath:aos-flight-postgres.properties"/>
 
         <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName" value="${jdbc.driver}" />
-            <property name="url" value="${jdbc.url}" />
-            <property name="username" value="${jdbc.username}" />
-            <property name="password" value="${jdbc.password}" />
-            <property name="maxIdle" value="10" />
-            <property name="maxActive" value="20" />
-            <property name="poolPreparedStatements" value="true" />
+            <property name="driverClassName" value="${jdbc.driver}"/>
+            <property name="url" value="${jdbc.url}"/>
+            <property name="username" value="${jdbc.username}"/>
+            <property name="password" value="${jdbc.password}"/>
+            <property name="maxIdle" value="10"/>
+            <property name="maxActive" value="20"/>
+            <property name="poolPreparedStatements" value="true"/>
         </bean>
     </beans>
 
